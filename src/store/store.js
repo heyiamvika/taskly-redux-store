@@ -1,10 +1,20 @@
-import { configureStore } from '@reduxjs/toolkit';
+import {
+	createStore,
+	combineReducers,
+	compose,
+	configureStore,
+	getDefaultMiddleware,
+} from '@reduxjs/toolkit';
+
 import authReducer from './auth';
 import calendarReducer from './calendar';
 
+const rootReducer = combineReducers({
+	auth: authReducer,
+	calendar: calendarReducer,
+});
+
 export default configureStore({
-	reducer: {
-		auth: authReducer,
-		calendar: calendarReducer,
-	},
+	reducer: rootReducer,
+	middleware: [...getDefaultMiddleware()],
 });

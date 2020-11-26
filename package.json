@@ -10,13 +10,22 @@
 	"author": "Vika N",
 	"license": "ISC",
 	"devDependencies": {
+		"dotenv-webpack": "^5.1.0",
 		"webpack": "4.41.6",
 		"webpack-cli": "3.3.11",
 		"webpack-dev-server": "3.10.3"
 	},
 	"dependencies": {
 		"@reduxjs/toolkit": "^1.4.0",
+		"axios": "^0.21.0",
+		"dotenv": "^8.2.0",
+		"firebase": "^8.1.1",
+		"immutable": "^4.0.0-rc.12",
+		"react": "^17.0.1",
+		"react-redux-firebase": "^3.8.1",
 		"redux": "^4.0.5",
+		"redux-firestore": "^0.14.0",
+		"redux-react-firebase": "^2.6.1",
 		"uuid": "^8.3.1"
 	}
 }
