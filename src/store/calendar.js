@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { apiCallBegan } from './api';
+import { firebaseReadDatabaseCallBegan } from './firebase/firebaseActions';
 
 const initialState = {
 	events: {},
@@ -26,6 +26,9 @@ const calendarSlice = createSlice({
 	initialState,
 	reducers: {
 		eventsReceived: (state, action) => {
+			// Use normalizr to set correct data!
+			const { year, month, events } = action.payload;
+
 			state.events = action.payload;
 		},
 		newEventAdded: (state, action) => {
@@ -68,15 +71,17 @@ export const {
 export default calendarSlice.reducer;
 
 // Action creators
-const url = '/bugs';
-export const loadEvents = () =>
-	apiCallBegan({
-		url,
+export const loadUserEvents = () => {
+	// Note! Should we pass uid, year and month as arguments??
+	const ref = '/calendars/B7cbkRoH7hTKGOPHNCRSpq9gXs23';
+
+	return firebaseReadDatabaseCallBegan({
+		ref,
 		onSuccess: eventsReceived.type,
 	});
+};
 
 // Selectors
-
 // 1. get month events
 // 3. Get day events
 // 2. Get weekly pinned events

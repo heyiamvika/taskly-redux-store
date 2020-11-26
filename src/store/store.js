@@ -1,13 +1,13 @@
 import {
-	createStore,
 	combineReducers,
-	compose,
 	configureStore,
 	getDefaultMiddleware,
 } from '@reduxjs/toolkit';
 
 import authReducer from './auth';
 import calendarReducer from './calendar';
+
+import firebaseReadDatabaseMiddleware from './middleware/firebaseReadDatabaseMiddleware';
 
 const rootReducer = combineReducers({
 	auth: authReducer,
@@ -16,5 +16,5 @@ const rootReducer = combineReducers({
 
 export default configureStore({
 	reducer: rootReducer,
-	middleware: [...getDefaultMiddleware()],
+	middleware: [...getDefaultMiddleware(), firebaseReadDatabaseMiddleware],
 });
