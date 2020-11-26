@@ -1,9 +1,9 @@
 import * as actions from '../firebase/firebaseActions.js';
 import firebase from '../firebase/firebaseConfig.js';
 
-const firebaseReadDatabaseMiddleware = ({ dispatch, getState }) => (
-	next,
-) => async (action) => {
+const firebaseSubscribeDatabaseMiddleware = ({ dispatch }) => (next) => (
+	action,
+) => {
 	next(action);
 
 	if (action.type !== actions.firebaseSubscribeDatabaseCallBegan.type) return;
@@ -11,7 +11,7 @@ const firebaseReadDatabaseMiddleware = ({ dispatch, getState }) => (
 	const { ref, onSuccess, onError } = action.payload;
 
 	try {
-		const result = await firebase
+		firebase
 			.database()
 			.ref(ref)
 			.on('value', (snapshot) => {
@@ -42,4 +42,4 @@ const firebaseReadDatabaseMiddleware = ({ dispatch, getState }) => (
 	}
 };
 
-export default firebaseReadDatabaseMiddleware;
+export default firebaseSubscribeDatabaseMiddleware;
