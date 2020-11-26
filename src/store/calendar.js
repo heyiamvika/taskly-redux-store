@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { firebaseReadDatabaseCallBegan } from './firebase/firebaseActions';
+import { firebaseSubscribeDatabaseCallBegan } from './firebase/firebaseActions';
 
 const initialState = {
 	events: {},
@@ -71,11 +71,11 @@ export const {
 export default calendarSlice.reducer;
 
 // Action creators
-export const loadUserEvents = () => {
+export const subscribeToUserEvents = () => {
 	// Note! Should we pass uid, year and month as arguments??
 	const ref = '/calendars/B7cbkRoH7hTKGOPHNCRSpq9gXs23';
 
-	return firebaseReadDatabaseCallBegan({
+	return firebaseSubscribeDatabaseCallBegan({
 		ref,
 		onSuccess: eventsReceived.type,
 	});

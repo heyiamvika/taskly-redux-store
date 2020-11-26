@@ -6,7 +6,7 @@ const firebaseReadDatabaseMiddleware = ({ dispatch, getState }) => (
 ) => async (action) => {
 	next(action);
 
-	if (action.type !== actions.firebaseReadDatabaseCallBegan.type) return;
+	if (action.type !== actions.firebaseSubscribeDatabaseCallBegan.type) return;
 
 	const { ref, onSuccess, onError } = action.payload;
 
@@ -14,19 +14,20 @@ const firebaseReadDatabaseMiddleware = ({ dispatch, getState }) => (
 		const result = await firebase
 			.database()
 			.ref(ref)
-			.once('value')
-			.then((snapshot) => snapshot.val());
+			.on('value', (snapshot) => {
+				const result = snapshot.val();
 
-		// Default
-		dispatch(actions.firebaseCallSuccess(result));
+				// Default
+				dispatch(actions.firebaseCallSuccess(result));
 
-		// For custom success actions
-		if (onSuccess) {
-			dispatch({
-				type: onSuccess,
-				payload: result,
+				// For custom success actions
+				if (onSuccess) {
+					dispatch({
+						type: onSuccess,
+						payload: result,
+					});
+				}
 			});
-		}
 	} catch (error) {
 		// Default
 		dispatch(actions.firebaseCallFailed(error.message));

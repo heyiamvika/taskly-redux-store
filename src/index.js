@@ -1,9 +1,4 @@
 import store from './store/store';
-import {
-	newEventAdded,
-	eventDeleted,
-	eventDetailsChanged,
-	loadUserEvents,
-} from './store/calendar';
+import { subscribeToUserEvents } from './store/calendar';
 
-store.dispatch(loadUserEvents());
+store.dispatch(subscribeToUserEvents());
