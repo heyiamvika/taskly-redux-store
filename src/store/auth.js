@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 
 const initialState = {
 	user: null,
@@ -20,6 +21,19 @@ export const authSlice = createSlice({
 		},
 	},
 });
+
+// Selectors (with memoization using Reselect library)
+
+export const getUserId = () => {
+	createSelector(
+		(state) => state.auth.user,
+		(user) => {
+			if (!user) return null;
+
+			return user.id;
+		},
+	);
+};
 
 export const { signup, login, logout } = authSlice.actions;
 export default authSlice.reducer;

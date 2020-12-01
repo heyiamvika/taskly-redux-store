@@ -3,6 +3,7 @@ import { createAction } from '@reduxjs/toolkit';
 export const firebaseSubscribeDatabaseCallBegan = createAction(
 	'firebase/firebaseSubscribeDatabaseCallBegan',
 );
+
 export const firebaseWriteDatabaseCallBegan = createAction(
 	'firebase/firebaseWriteDatabaseCallBegan',
 );
