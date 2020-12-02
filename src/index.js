@@ -3,18 +3,38 @@ import {
 	subscribeToUserEvents,
 	getDaysWithEvents,
 	getDayEvents,
+	getEventByKey,
 	addNewEvent,
 	updateEvent,
 	removeEvent,
+	getYearEvents,
+	getMonthEvents,
 } from './store/calendar';
 
 store.subscribe(() => {
 	const state = store.getState();
 
-	const daysWithEvents = getDaysWithEvents('2020', '9')(state);
-	console.log('daysWithEvents', daysWithEvents);
+	// const daysWithEvents = getDaysWithEvents('2020', '9')(state);
+	// console.log('daysWithEvents', daysWithEvents);
 
-	const dayEvents = getDayEvents('2020', '9', '20')(state);
+	// const dayEvents = getDayEvents('2020', '12', '1')(state);
+	// console.log('dayEvents', dayEvents);
+
+	const eventByKey = getEventByKey(
+		'2020',
+		'12',
+		'1',
+		'-MNXs6DUJ2g-x82YAxQO',
+	)(state);
+	console.log('event by key', eventByKey);
+
+	// const yearEvents = getYearEvents('2020')(state);
+	// console.log('yearEvents', yearEvents);
+
+	const monthEvents = getMonthEvents('2020', '12')(state);
+	console.log('monthEvents', monthEvents);
+
+	const dayEvents = getDayEvents('2020', '12', '1')(state);
 	console.log('dayEvents', dayEvents);
 });
 

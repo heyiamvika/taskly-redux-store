@@ -49,7 +49,19 @@ export const removeEvent = (uid, year, month, day, eventKey) => {
 	return firebaseActions.removeItemCallBegun({ ref });
 };
 
-// export const pinEvent = (eventId) => {};
+export const pinEvent = (uid, year, month, day, eventKey, event) => {
+	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	const pinnedEvent = { ...event, isPinned: true };
+
+	return firebaseActions.updateItemCallBegun({ ref, pinnedEvent });
+};
+
+export const unpinEvent = (uid, year, month, day, eventKey, event) => {
+	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	const unpinnedEvent = { ...event, isPinned: false };
+
+	return firebaseActions.updateItemCallBegun({ ref, unpinnedEvent });
+};
 
 // // Collaboration!!
 // export const addAttendee = () => {};
@@ -59,7 +71,6 @@ export const removeEvent = (uid, year, month, day, eventKey) => {
 // Selectors (with memoization using Reselect library)
 
 // 1. get month events booleans
-// REFACTOR
 export const getDaysWithEvents = (year, month) =>
 	createSelector(
 		(state) => state.calendar.events,
@@ -68,11 +79,8 @@ export const getDaysWithEvents = (year, month) =>
 
 			if (!isObjectEmpty(events)) {
 				const monthlyEvents = events[year][month];
-
 				for (const day in monthlyEvents) {
-					if (!isObjectEmpty(monthlyEvents[day])) {
-						result.push(day);
-					}
+					if (!isObjectEmpty(monthlyEvents[day])) result.push(day);
 				}
 			}
 
@@ -82,15 +90,27 @@ export const getDaysWithEvents = (year, month) =>
 
 // 2. Get weekly pinned events
 
-// 3. Get day events
-export const getDayEvents = (year, month, day) =>
+export const getYearEvents = (year) =>
 	createSelector(
 		(state) => state.calendar.events,
-		(events) => {
-			return isObjectEmpty(events)
-				? []
-				: Object.values(events[year][month][day]);
-		},
+		(events) => (events.hasOwnProperty(year) ? events[year] : []),
+	);
+
+export const getMonthEvents = (year, month) =>
+	createSelector(getYearEvents(year), (yearEvents) =>
+		yearEvents.hasOwnProperty(month) ? yearEvents[month] : [],
+	);
+
+export const getDayEvents = (year, month, day) =>
+	createSelector(
+		getMonthEvents(year, month),
+		(monthEvents) => monthEvents[day] || [],
+	);
+
+export const getEventByKey = (year, month, day, eventKey) =>
+	createSelector(
+		getDayEvents(year, month, day),
+		(dayEvents) => dayEvents[eventKey] || [],
 	);
 
 export const { eventsUpdated } = calendarSlice.actions;
