@@ -8,7 +8,7 @@ const firebaseActionTypes = [
 	firebaseActions.removeItemCallBegun.type,
 ];
 
-const firebaseMiddleware = ({ dispatch }) => (next) => (action) => {
+const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => (action) => {
 	next(action);
 
 	if (!firebaseActionTypes.includes(action.type)) return;
@@ -42,7 +42,7 @@ const firebaseMiddleware = ({ dispatch }) => (next) => (action) => {
 		const { onError } = action.payload;
 
 		// Default
-		dispatch(firebaseActions.firebaseCallFailed(error.message));
+		dispatch(firebaseActions.firebaseCallFailed(error));
 
 		// For custom error actions
 		if (onError) {
@@ -54,7 +54,7 @@ const firebaseMiddleware = ({ dispatch }) => (next) => (action) => {
 	}
 };
 
-export default firebaseMiddleware;
+export default firebaseDatabaseMiddleware;
 
 function subscribeToDatabase(dispatch, ref, onSuccess) {
 	database.ref(ref).on('value', (snapshot) => {

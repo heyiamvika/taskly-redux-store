@@ -63,14 +63,12 @@ export const unpinEvent = (uid, year, month, day, eventKey, event) => {
 	return firebaseActions.updateItemCallBegun({ ref, unpinnedEvent });
 };
 
-// // Collaboration!!
+// Collaboration!!
 // export const addAttendee = () => {};
 
 // export const removeAttendee = () => {};
 
-// Selectors (with memoization using Reselect library)
-
-// 1. get month events booleans
+// Selectors
 export const getDaysWithEvents = (year, month) =>
 	createSelector(
 		(state) => state.calendar.events,
@@ -87,8 +85,6 @@ export const getDaysWithEvents = (year, month) =>
 			return result;
 		},
 	);
-
-// 2. Get weekly pinned events
 
 export const getYearEvents = (year) =>
 	createSelector(
@@ -113,5 +109,7 @@ export const getEventByKey = (year, month, day, eventKey) =>
 		(dayEvents) => dayEvents[eventKey] || [],
 	);
 
-export const { eventsUpdated } = calendarSlice.actions;
 export default calendarSlice.reducer;
+
+// Helper functions
+// const getDaysInMonthCount = (year, month) => new Date(year, month, 0).getDate();

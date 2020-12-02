@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 
+import * as firebaseActions from './firebase/firebaseActions';
+
 const initialState = {
 	user: null,
 	loading: false,
@@ -10,30 +12,41 @@ export const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {
-		signup: (state, action) => {
+		userAuthorized: (state, action) => {
 			state.user = action.payload;
 		},
-		login: (state, action) => {
-			state.user = action.payload;
-		},
-		logout: (state) => {
+		userLoggedOut: (state) => {
 			state.user = null;
 		},
 	},
 });
 
-// Selectors (with memoization using Reselect library)
+// Action creators
+export const subscribeToUserAuthStateChanges = () =>
+	firebaseActions.subscribeAuthCallBegan({
+		onAuthorized: authSlice.actions.userAuthorized.type,
+		onLoggedOut: authSlice.actions.userLoggedOut.type,
+	});
+
+export const signup = (email, password) =>
+	firebaseActions.userSignupCallBegun({ email, password });
+export const login = (email, password) =>
+	firebaseActions.userLoginCallBegun({ email, password });
+export const logout = () => firebaseActions.userLogoutCallBegun();
+
+// Selectors
+export const isUserLoggedIn = () => {
+	createSelector(
+		(state) => state.auth.user,
+		(user) => Boolean(user),
+	);
+};
 
 export const getUserId = () => {
 	createSelector(
 		(state) => state.auth.user,
-		(user) => {
-			if (!user) return null;
-
-			return user.id;
-		},
+		(user) => (user ? user.id : null),
 	);
 };
 
-export const { signup, login, logout } = authSlice.actions;
 export default authSlice.reducer;

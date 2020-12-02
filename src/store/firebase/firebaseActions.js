@@ -1,5 +1,14 @@
 import { createAction } from '@reduxjs/toolkit';
 
+// Auth
+export const subscribeAuthCallBegan = createAction(
+	'firebase/subscribeAuthCallBegan',
+);
+export const userSignupCallBegun = createAction('firebase/userSignupCallBegun');
+export const userLoginCallBegun = createAction('firebase/userLoginCallBegun');
+export const userLogoutCallBegun = createAction('firebase/userLogoutCallBegun');
+
+// Database
 export const subscribeDatabaseCallBegan = createAction(
 	'firebase/subscribeDatabaseCallBegan',
 );
