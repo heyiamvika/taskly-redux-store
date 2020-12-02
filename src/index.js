@@ -4,6 +4,8 @@ import {
 	getDaysWithEvents,
 	getDayEvents,
 	addNewEvent,
+	updateEvent,
+	removeEvent,
 } from './store/calendar';
 
 store.subscribe(() => {
@@ -18,19 +20,41 @@ store.subscribe(() => {
 
 store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));
 
-store.dispatch(
-	addNewEvent({
-		uid: 'B7cbkRoH7hTKGOPHNCRSpq9gXs23',
-		year: '2020',
-		month: '12',
-		day: '1',
-		event: {
-			emoji: '',
-			startTime: '20/10/2020',
-			finishTime: '20/10/2020',
-			title: 'Hemllllloooo',
-			notes: 'This is a note',
-			isPinned: false,
-		},
-	}),
-);
+// store.dispatch(
+// 	addNewEvent('B7cbkRoH7hTKGOPHNCRSpq9gXs23', '2020', '12', '1', {
+// 		emoji: '',
+// 		startTime: '20/10/2020',
+// 		finishTime: '20/10/2020',
+// 		title: 'Hemllllloooo',
+// 		notes: 'This is a note',
+// 		isPinned: false,
+// 	}),
+// );
+
+// store.dispatch(
+// 	updateEvent(
+// 		'B7cbkRoH7hTKGOPHNCRSpq9gXs23',
+// 		'2020',
+// 		'12',
+// 		'1',
+// 		'-MNXrlbjJoxyS4Ey6WhB',
+// 		{
+// 			emoji: '',
+// 			startTime: '20/10/2020',
+// 			finishTime: '20/10/2020',
+// 			title: 'Uppppdaaated',
+// 			notes: 'This is a note',
+// 			isPinned: false,
+// 		},
+// 	),
+// );
+
+// store.dispatch(
+// 	removeEvent(
+// 		'B7cbkRoH7hTKGOPHNCRSpq9gXs23',
+// 		'2020',
+// 		'12',
+// 		'1',
+// 		'-MNXrlbjJoxyS4Ey6WhB',
+// 	),
+// );

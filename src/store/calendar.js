@@ -1,13 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 import { createSlice } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
-import {
-	firebaseSubscribeDatabaseCallBegan,
-	firebaseWriteDatabaseCallBegan,
-} from './firebase/firebaseActions';
 
 import { isObjectEmpty } from '../utils';
+
+import * as firebaseActions from './firebase/firebaseActions';
 
 const initialState = {
 	events: {},
@@ -28,21 +26,35 @@ const calendarSlice = createSlice({
 // Action creators
 export const subscribeToUserEvents = (userId) => {
 	// TO_DO: get user id from auth.user.id
-
 	const ref = `/calendars/${userId}`;
 
-	return firebaseSubscribeDatabaseCallBegan({
+	return firebaseActions.subscribeDatabaseCallBegan({
 		ref,
 		onSuccess: calendarSlice.actions.eventsUpdated.type,
 	});
 };
 
-export const addNewEvent = (eventDetails) => {
-	const { uid, year, month, day, event } = eventDetails;
-	const ref = `calendars/${uid}/${year}/${month}/${day}`;
-
-	return firebaseWriteDatabaseCallBegan({ ref, event });
+export const addNewEvent = (uid, year, month, day, event) => {
+	const ref = `/calendars/${uid}/${year}/${month}/${day}`;
+	return firebaseActions.addItemCallBegun({ ref, event });
 };
+
+export const updateEvent = (uid, year, month, day, eventKey, updatedEvent) => {
+	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	return firebaseActions.updateItemCallBegun({ ref, updatedEvent });
+};
+
+export const removeEvent = (uid, year, month, day, eventKey) => {
+	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	return firebaseActions.removeItemCallBegun({ ref });
+};
+
+// export const pinEvent = (eventId) => {};
+
+// // Collaboration!!
+// export const addAttendee = () => {};
+
+// export const removeAttendee = () => {};
 
 // Selectors (with memoization using Reselect library)
 
@@ -81,4 +93,5 @@ export const getDayEvents = (year, month, day) =>
 		},
 	);
 
+export const { eventsUpdated } = calendarSlice.actions;
 export default calendarSlice.reducer;
