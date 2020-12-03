@@ -9,6 +9,7 @@ import {
 	removeEvent,
 	getYearEvents,
 	getMonthEvents,
+	addNewAttendee,
 } from './store/calendar';
 
 import {
@@ -61,11 +62,6 @@ store.subscribe(() => {
 
 store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));
 
-setTimeout(
-	() => store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23')),
-	5000,
-);
-
 // store.dispatch(
 // 	addNewEvent('B7cbkRoH7hTKGOPHNCRSpq9gXs23', '2020', '12', '1', {
 // 		emoji: '',
@@ -73,9 +69,24 @@ setTimeout(
 // 		finishTime: '20/10/2020',
 // 		title: 'Hemllllloooo',
 // 		notes: 'This is a note',
-// 		isPinned: false,
 // 	}),
 // );
+
+const testAttendee = {
+	email: 'viktoriian@wix.com',
+	hasAccepted: false,
+};
+
+store.dispatch(
+	addNewAttendee(
+		testAttendee,
+		'B7cbkRoH7hTKGOPHNCRSpq9gXs23',
+		'2020',
+		'12',
+		'1',
+		'-MNd4oUtnMhnmB6srgvT',
+	),
+);
 
 // // store.dispatch(
 // 	updateEvent(

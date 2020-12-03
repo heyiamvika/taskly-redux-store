@@ -6,6 +6,10 @@ import { createSelector } from 'reselect';
 import { isObjectEmpty } from '../utils';
 
 import * as firebaseActions from './firebase/firebaseActions';
+import {
+	createEventsRef,
+	createAttendeesRef,
+} from './firebase/firebaseRefCreators';
 
 const initialState = {
 	events: {},
@@ -25,7 +29,6 @@ const calendarSlice = createSlice({
 		},
 		eventsUpdated: (state, action) => {
 			state.events = action.payload;
-			state.lastFetch = Date.now();
 			state.loading = false;
 		},
 		subscribedToEvents: (state) => {
@@ -43,12 +46,12 @@ const {
 export default calendarSlice.reducer;
 
 // Action creators
-export const subscribeToUserEvents = (userId) => (dispatch, getState) => {
+export const subscribeToUserEvents = (uid) => (dispatch, getState) => {
 	const { isSubscribed } = getState().calendar;
 	if (isSubscribed) return;
 
 	// TO_DO: get user id from auth.user.id
-	const ref = `/calendars/${userId}`;
+	const ref = createEventsRef({ uid });
 
 	dispatch(
 		firebaseActions.subscribeDatabaseCallBegan({
@@ -62,28 +65,19 @@ export const subscribeToUserEvents = (userId) => (dispatch, getState) => {
 	dispatch(subscribedToEvents());
 };
 
-// export const subscribeToUserEvents = (userId) => {
-// 	// TO_DO: get user id from auth.user.id
-// 	const ref = `/calendars/${userId}`;
-
-// 	return firebaseActions.subscribeDatabaseCallBegan({
-// 		ref,
-// 		onSuccess: eventsUpdated.type,
-// 		onStart: eventsChangesRequested.type,
-// 		onError: eventsChangesRequestFailed.type,
-// 	});
-// };
-
 export const addNewEvent = (uid, year, month, day, event) => {
-	const ref = `/calendars/${uid}/${year}/${month}/${day}`;
+	const ref = createEventsRef({ uid, year, month, day });
+	const eventToAdd = { ...event, isPinned: false };
+
 	return firebaseActions.addItemCallBegun({
 		ref,
-		event,
+		item: eventToAdd,
 	});
 };
 
 export const updateEvent = (uid, year, month, day, eventKey, updatedEvent) => {
-	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	const ref = createEventsRef({ uid, year, month, day, eventKey });
+
 	return firebaseActions.updateItemCallBegun({
 		ref,
 		updatedEvent,
@@ -91,28 +85,36 @@ export const updateEvent = (uid, year, month, day, eventKey, updatedEvent) => {
 };
 
 export const removeEvent = (uid, year, month, day, eventKey) => {
-	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	const ref = createEventsRef({ uid, year, month, day, eventKey });
+
 	return firebaseActions.removeItemCallBegun({
 		ref,
 	});
 };
 
 export const pinEvent = (uid, year, month, day, eventKey, event) => {
-	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	const ref = createEventsRef({ uid, year, month, day, eventKey });
 	const pinnedEvent = { ...event, isPinned: true };
 
 	return firebaseActions.updateItemCallBegun({ ref, pinnedEvent });
 };
 
 export const unpinEvent = (uid, year, month, day, eventKey, event) => {
-	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
+	const ref = createEventsRef({ uid, year, month, day, eventKey });
 	const unpinnedEvent = { ...event, isPinned: false };
 
 	return firebaseActions.updateItemCallBegun({ ref, unpinnedEvent });
 };
 
 // Collaboration!!
-// export const addAttendee = () => {};
+export const addNewAttendee = (attendee, uid, year, month, day, eventKey) => {
+	const ref = createAttendeesRef({ uid, year, month, day, eventKey });
+
+	return firebaseActions.addItemCallBegun({
+		ref,
+		item: attendee,
+	});
+};
 
 // export const removeAttendee = () => {};
 

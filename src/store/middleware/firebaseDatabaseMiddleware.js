@@ -23,18 +23,19 @@ const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
 				break;
 			}
 			case firebaseActions.addItemCallBegun.type: {
-				const { ref, event } = action.payload;
-				await addNewItemToDatabase(ref, event);
+				const { ref, item } = action.payload;
+
+				await addNewItem(ref, item);
 				break;
 			}
 			case firebaseActions.updateItemCallBegun.type: {
-				const { ref, updatedEvent } = action.payload;
-				await editItemDetails(ref, updatedEvent);
+				const { ref, updatedItem } = action.payload;
+				await editItem(ref, updatedItem);
 				break;
 			}
 			case firebaseActions.removeItemCallBegun.type: {
 				const { ref } = action.payload;
-				await removeItemFromDatabase(ref);
+				await removeItem(ref);
 				return;
 			}
 			default:
@@ -77,7 +78,6 @@ const subscribeToDatabase = (dispatch, ref, onSuccess, onStart) =>
 		}
 	});
 
-const addNewItemToDatabase = (ref, item) => database.ref(ref).push(item);
-const editItemDetails = (ref, updatedItem) =>
-	database.ref(ref).update(updatedItem);
-const removeItemFromDatabase = (ref) => database.ref(ref).remove();
+const addNewItem = (ref, item) => database.ref(ref).push(item);
+const editItem = (ref, updatedItem) => database.ref(ref).update(updatedItem);
+const removeItem = (ref) => database.ref(ref).remove();
