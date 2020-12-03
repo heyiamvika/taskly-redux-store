@@ -1,8 +1,6 @@
 import * as firebaseActions from '../firebase/firebaseActions.js';
 import { database } from '../firebase/firebaseConfig.js';
 
-import { eventsRequested } from '../calendar.js';
-
 const firebaseActionTypes = [
 	firebaseActions.subscribeDatabaseCallBegan.type,
 	firebaseActions.addItemCallBegun.type,
@@ -16,13 +14,12 @@ const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
 	if (!firebaseActionTypes.includes(action.type)) return next(action);
 
 	next(action);
-	dispatch(eventsRequested());
 
 	try {
 		switch (action.type) {
 			case firebaseActions.subscribeDatabaseCallBegan.type: {
-				const { ref, onSuccess } = action.payload;
-				await subscribeToDatabase(dispatch, ref, onSuccess);
+				const { ref, onSuccess, onStart } = action.payload;
+				await subscribeToDatabase(dispatch, ref, onSuccess, onStart);
 				break;
 			}
 			case firebaseActions.addItemCallBegun.type: {
@@ -53,7 +50,7 @@ const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
 		if (onError) {
 			dispatch({
 				type: onError,
-				payload: error,
+				payload: error.message,
 			});
 		}
 	}
@@ -61,8 +58,11 @@ const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
 
 export default firebaseDatabaseMiddleware;
 
-const subscribeToDatabase = (dispatch, ref, onSuccess) =>
+const subscribeToDatabase = (dispatch, ref, onSuccess, onStart) =>
 	database.ref(ref).on('value', (snapshot) => {
+		// For loading indicators
+		if (onStart) dispatch({ type: onStart });
+
 		const result = snapshot.val();
 
 		// Default

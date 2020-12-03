@@ -1,8 +1,6 @@
 import * as firebaseActions from '../firebase/firebaseActions.js';
 import { auth } from '../firebase/firebaseConfig.js';
 
-import { authStarted } from '../auth.js';
-
 const firebaseActionTypes = [
 	firebaseActions.subscribeAuthCallBegan.type,
 	firebaseActions.userSignupCallBegun.type,
@@ -14,13 +12,12 @@ const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
 	if (!firebaseActionTypes.includes(action.type)) return next(action);
 
 	next(action);
-	dispatch(authStarted());
 
 	try {
 		switch (action.type) {
 			case firebaseActions.subscribeAuthCallBegan.type: {
-				const { onAuthorized, onLoggedOut } = action.payload;
-				await subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut);
+				const { onAuthorized, onLoggedOut, onStart } = action.payload;
+				await subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut, onStart);
 				break;
 			}
 			case firebaseActions.userSignupCallBegun.type: {
@@ -50,7 +47,7 @@ const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
 		if (onError) {
 			dispatch({
 				type: onError,
-				payload: error,
+				payload: error.message,
 			});
 		}
 	}
@@ -58,14 +55,18 @@ const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
 
 export default firebaseAuthMiddleware;
 
-const subscribeToUserAuth = (dispatch, onAuthorized, onLoggedOut) =>
+const subscribeToUserAuth = (dispatch, onAuthorized, onLoggedOut, onStart) =>
 	auth.onAuthStateChanged((user) => {
+		// For loading indicators
+		if (onStart) dispatch({ type: onStart });
+
 		// Default
 		dispatch(firebaseActions.firebaseCallSuccess());
 
 		if (user) {
 			if (onAuthorized) {
 				const { displayName: fullName, email, photoURL: profileImage } = user;
+
 				dispatch({
 					type: onAuthorized,
 					payload: {

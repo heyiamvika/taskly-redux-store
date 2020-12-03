@@ -72,7 +72,7 @@ store.dispatch(signup('viktoriian@wix.com', 'balalajaja'));
 // 	}),
 // );
 
-// store.dispatch(
+// // store.dispatch(
 // 	updateEvent(
 // 		'B7cbkRoH7hTKGOPHNCRSpq9gXs23',
 // 		'2020',

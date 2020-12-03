@@ -12,8 +12,11 @@ export const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {
-		authStarted: (state, action) => {
+		authStarted: (state) => {
 			state.loading = true;
+		},
+		authFailed: (state) => {
+			state.loading = false;
 		},
 		userAuthorized: (state, action) => {
 			state.user = action.payload;
@@ -26,17 +29,36 @@ export const authSlice = createSlice({
 	},
 });
 
+export const {
+	userAuthorized,
+	userLoggedOut,
+	authStarted,
+	authFailed,
+} = authSlice.actions;
+export default authSlice.reducer;
+
 // Action creators
-export const subscribeToUserAuthStateChanges = () =>
-	firebaseActions.subscribeAuthCallBegan({
-		onAuthorized: authSlice.actions.userAuthorized.type,
-		onLoggedOut: authSlice.actions.userLoggedOut.type,
+export const subscribeToUserAuthStateChanges = () => {
+	return firebaseActions.subscribeAuthCallBegan({
+		onAuthorized: userAuthorized.type,
+		onLoggedOut: userLoggedOut.type,
+		onStart: authStarted.type,
+		onError: authFailed.type,
 	});
+};
 
 export const signup = (email, password) =>
-	firebaseActions.userSignupCallBegun({ email, password });
+	firebaseActions.userSignupCallBegun({
+		email,
+		password,
+		onError: authFailed.type,
+	});
 export const login = (email, password) =>
-	firebaseActions.userLoginCallBegun({ email, password });
+	firebaseActions.userLoginCallBegun({
+		email,
+		password,
+		onError: authFailed.type,
+	});
 export const logout = () => firebaseActions.userLogoutCallBegun();
 
 // Selectors
@@ -53,6 +75,3 @@ export const getUserId = () => {
 		(user) => (user ? user.id : null),
 	);
 };
-
-export const { authStarted } = authSlice.actions;
-export default authSlice.reducer;

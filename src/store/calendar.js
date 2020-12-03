@@ -17,8 +17,11 @@ const calendarSlice = createSlice({
 	name: 'calendar',
 	initialState,
 	reducers: {
-		eventsRequested: (state, action) => {
+		eventsChangesRequested: (state) => {
 			state.loading = true;
+		},
+		eventsChangesRequestFailed: (state) => {
+			state.loading = false;
 		},
 		eventsUpdated: (state, action) => {
 			state.events = action.payload;
@@ -27,6 +30,13 @@ const calendarSlice = createSlice({
 	},
 });
 
+export const {
+	eventsChangesRequested,
+	eventsChangesRequestFailed,
+	eventsUpdated,
+} = calendarSlice.actions;
+export default calendarSlice.reducer;
+
 // Action creators
 export const subscribeToUserEvents = (userId) => {
 	// TO_DO: get user id from auth.user.id
@@ -34,23 +44,33 @@ export const subscribeToUserEvents = (userId) => {
 
 	return firebaseActions.subscribeDatabaseCallBegan({
 		ref,
-		onSuccess: calendarSlice.actions.eventsUpdated.type,
+		onSuccess: eventsUpdated.type,
+		onStart: eventsChangesRequested.type,
+		onError: eventsChangesRequestFailed.type,
 	});
 };
 
 export const addNewEvent = (uid, year, month, day, event) => {
 	const ref = `/calendars/${uid}/${year}/${month}/${day}`;
-	return firebaseActions.addItemCallBegun({ ref, event });
+	return firebaseActions.addItemCallBegun({
+		ref,
+		event,
+	});
 };
 
 export const updateEvent = (uid, year, month, day, eventKey, updatedEvent) => {
 	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
-	return firebaseActions.updateItemCallBegun({ ref, updatedEvent });
+	return firebaseActions.updateItemCallBegun({
+		ref,
+		updatedEvent,
+	});
 };
 
 export const removeEvent = (uid, year, month, day, eventKey) => {
 	const ref = `/calendars/${uid}/${year}/${month}/${day}/${eventKey}`;
-	return firebaseActions.removeItemCallBegun({ ref });
+	return firebaseActions.removeItemCallBegun({
+		ref,
+	});
 };
 
 export const pinEvent = (uid, year, month, day, eventKey, event) => {
@@ -112,9 +132,6 @@ export const getEventByKey = (year, month, day, eventKey) =>
 		getDayEvents(year, month, day),
 		(dayEvents) => dayEvents[eventKey] || [],
 	);
-
-export const { eventsRequested } = calendarSlice.actions;
-export default calendarSlice.reducer;
 
 // Helper functions
 // const getDaysInMonthCount = (year, month) => new Date(year, month, 0).getDate();
