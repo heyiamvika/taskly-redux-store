@@ -1,6 +1,8 @@
 import * as firebaseActions from '../firebase/firebaseActions.js';
 import { database } from '../firebase/firebaseConfig.js';
 
+import { eventsRequested } from '../calendar.js';
+
 const firebaseActionTypes = [
 	firebaseActions.subscribeDatabaseCallBegan.type,
 	firebaseActions.addItemCallBegun.type,
@@ -11,8 +13,10 @@ const firebaseActionTypes = [
 const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
 	action,
 ) => {
+	if (!firebaseActionTypes.includes(action.type)) return next(action);
+
 	next(action);
-	if (!firebaseActionTypes.includes(action.type)) return;
+	dispatch(eventsRequested());
 
 	try {
 		switch (action.type) {

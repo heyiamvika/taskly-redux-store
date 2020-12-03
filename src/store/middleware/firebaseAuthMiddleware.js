@@ -1,6 +1,8 @@
 import * as firebaseActions from '../firebase/firebaseActions.js';
 import { auth } from '../firebase/firebaseConfig.js';
 
+import { authStarted } from '../auth.js';
+
 const firebaseActionTypes = [
 	firebaseActions.subscribeAuthCallBegan.type,
 	firebaseActions.userSignupCallBegun.type,
@@ -9,8 +11,10 @@ const firebaseActionTypes = [
 ];
 
 const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
+	if (!firebaseActionTypes.includes(action.type)) return next(action);
+
 	next(action);
-	if (!firebaseActionTypes.includes(action.type)) return;
+	dispatch(authStarted());
 
 	try {
 		switch (action.type) {
@@ -60,7 +64,6 @@ const subscribeToUserAuth = (dispatch, onAuthorized, onLoggedOut) =>
 		dispatch(firebaseActions.firebaseCallSuccess());
 
 		if (user) {
-			// User is signed in.
 			if (onAuthorized) {
 				const { displayName: fullName, email, photoURL: profileImage } = user;
 				dispatch({
@@ -73,9 +76,7 @@ const subscribeToUserAuth = (dispatch, onAuthorized, onLoggedOut) =>
 				});
 			}
 		} else {
-			// No user is signed in.
 			if (onLoggedOut) {
-				// console.log(user);
 				dispatch({
 					type: onLoggedOut,
 				});

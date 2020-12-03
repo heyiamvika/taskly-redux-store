@@ -18,6 +18,14 @@ import {
 	subscribeToUserAuthStateChanges,
 } from './store/auth';
 
+import { apiCallBegan, apiCallSuccess, apiCallFailed } from './store/api';
+
+// store.dispatch(
+// 	apiCallBegan({
+// 		url: '/bugs',
+// 	}),
+// );
+
 store.subscribe(() => {
 	const state = store.getState();
 
@@ -48,7 +56,7 @@ store.subscribe(() => {
 	// console.log('dayEvents', dayEvents);
 });
 
-// store.dispatch(subscribeToUserAuthStateChanges());
+store.dispatch(subscribeToUserAuthStateChanges());
 store.dispatch(signup('viktoriian@wix.com', 'balalajaja'));
 
 // store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));

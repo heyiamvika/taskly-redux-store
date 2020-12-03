@@ -17,8 +17,12 @@ const calendarSlice = createSlice({
 	name: 'calendar',
 	initialState,
 	reducers: {
+		eventsRequested: (state, action) => {
+			state.loading = true;
+		},
 		eventsUpdated: (state, action) => {
 			state.events = action.payload;
+			state.loading = false;
 		},
 	},
 });
@@ -109,6 +113,7 @@ export const getEventByKey = (year, month, day, eventKey) =>
 		(dayEvents) => dayEvents[eventKey] || [],
 	);
 
+export const { eventsRequested } = calendarSlice.actions;
 export default calendarSlice.reducer;
 
 // Helper functions
