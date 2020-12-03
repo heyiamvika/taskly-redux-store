@@ -8,30 +8,29 @@ const firebaseActionTypes = [
 	firebaseActions.userLogoutCallBegun.type,
 ];
 
-const firebaseAuthMiddleware = ({ dispatch }) => (next) => (action) => {
+const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
 	next(action);
-
 	if (!firebaseActionTypes.includes(action.type)) return;
 
 	try {
 		switch (action.type) {
 			case firebaseActions.subscribeAuthCallBegan.type: {
 				const { onAuthorized, onLoggedOut } = action.payload;
-				subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut);
+				await subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut);
 				break;
 			}
 			case firebaseActions.userSignupCallBegun.type: {
 				const { email, password } = action.payload;
-				signupUser(email, password);
+				await signupUser(email, password);
 				break;
 			}
 			case firebaseActions.userLoginCallBegun.type: {
 				const { email, password } = action.payload;
-				loginUser(email, password);
+				await loginUser(email, password);
 				break;
 			}
 			case firebaseActions.userLogoutCallBegun.type: {
-				logoutUser();
+				await logoutUser();
 				break;
 			}
 			default:
@@ -41,7 +40,7 @@ const firebaseAuthMiddleware = ({ dispatch }) => (next) => (action) => {
 		const { onError } = action.payload;
 
 		// Default
-		dispatch(firebaseActions.firebaseCallFailed(error));
+		dispatch(firebaseActions.firebaseCallFailed(error.message));
 
 		// For custom error actions
 		if (onError) {
@@ -55,7 +54,7 @@ const firebaseAuthMiddleware = ({ dispatch }) => (next) => (action) => {
 
 export default firebaseAuthMiddleware;
 
-function subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut) {
+const subscribeToUserAuth = (dispatch, onAuthorized, onLoggedOut) =>
 	auth.onAuthStateChanged((user) => {
 		// Default
 		dispatch(firebaseActions.firebaseCallSuccess());
@@ -63,7 +62,6 @@ function subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut) {
 		if (user) {
 			// User is signed in.
 			if (onAuthorized) {
-				console.log(user);
 				const { displayName: fullName, email, photoURL: profileImage } = user;
 				dispatch({
 					type: onAuthorized,
@@ -84,16 +82,11 @@ function subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut) {
 			}
 		}
 	});
-}
 
-function signupUser(email, password) {
+const signupUser = (email, password) =>
 	auth.createUserWithEmailAndPassword(email, password);
-}
 
-function loginUser(email, password) {
+const loginUser = (email, password) =>
 	auth.signInWithEmailAndPassword(email, password);
-}
 
-function logoutUser() {
-	auth.signOut();
-}
+const logoutUser = () => auth.signOut();

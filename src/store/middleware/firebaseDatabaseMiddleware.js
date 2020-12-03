@@ -8,31 +8,32 @@ const firebaseActionTypes = [
 	firebaseActions.removeItemCallBegun.type,
 ];
 
-const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => (action) => {
+const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
+	action,
+) => {
 	next(action);
-
 	if (!firebaseActionTypes.includes(action.type)) return;
 
 	try {
 		switch (action.type) {
 			case firebaseActions.subscribeDatabaseCallBegan.type: {
 				const { ref, onSuccess } = action.payload;
-				subscribeToDatabase(dispatch, ref, onSuccess);
+				await subscribeToDatabase(dispatch, ref, onSuccess);
 				break;
 			}
 			case firebaseActions.addItemCallBegun.type: {
 				const { ref, event } = action.payload;
-				addNewItemToDatabase(ref, event);
+				await addNewItemToDatabase(ref, event);
 				break;
 			}
 			case firebaseActions.updateItemCallBegun.type: {
 				const { ref, updatedEvent } = action.payload;
-				editItemDetails(ref, updatedEvent);
+				await editItemDetails(ref, updatedEvent);
 				break;
 			}
 			case firebaseActions.removeItemCallBegun.type: {
 				const { ref } = action.payload;
-				removeItemFromDatabase(ref);
+				await removeItemFromDatabase(ref);
 				return;
 			}
 			default:
@@ -42,7 +43,7 @@ const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => (action) => {
 		const { onError } = action.payload;
 
 		// Default
-		dispatch(firebaseActions.firebaseCallFailed(error));
+		dispatch(firebaseActions.firebaseCallFailed(error.message));
 
 		// For custom error actions
 		if (onError) {
@@ -56,7 +57,7 @@ const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => (action) => {
 
 export default firebaseDatabaseMiddleware;
 
-function subscribeToDatabase(dispatch, ref, onSuccess) {
+const subscribeToDatabase = (dispatch, ref, onSuccess) =>
 	database.ref(ref).on('value', (snapshot) => {
 		const result = snapshot.val();
 
@@ -71,16 +72,8 @@ function subscribeToDatabase(dispatch, ref, onSuccess) {
 			});
 		}
 	});
-}
 
-function addNewItemToDatabase(ref, item) {
-	database.ref(ref).push(item);
-}
-
-function editItemDetails(ref, updatedItem) {
+const addNewItemToDatabase = (ref, item) => database.ref(ref).push(item);
+const editItemDetails = (ref, updatedItem) =>
 	database.ref(ref).update(updatedItem);
-}
-
-function removeItemFromDatabase(ref) {
-	database.ref(ref).remove();
-}
+const removeItemFromDatabase = (ref) => database.ref(ref).remove();

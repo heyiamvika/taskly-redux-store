@@ -48,7 +48,7 @@ store.subscribe(() => {
 	// console.log('dayEvents', dayEvents);
 });
 
-store.dispatch(subscribeToUserAuthStateChanges());
+// store.dispatch(subscribeToUserAuthStateChanges());
 store.dispatch(signup('viktoriian@wix.com', 'balalajaja'));
 
 // store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));

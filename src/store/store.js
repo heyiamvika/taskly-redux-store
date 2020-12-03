@@ -6,6 +6,8 @@ import {
 
 import authReducer from './auth';
 import calendarReducer from './calendar';
+// Test
+import api from './middleware/api';
 
 import firebaseAuthMiddleware from './middleware/firebaseAuthMiddleware';
 import firebaseDatabaseMiddleware from './middleware/firebaseDatabaseMiddleware';
@@ -21,5 +23,6 @@ export default configureStore({
 		...getDefaultMiddleware(),
 		firebaseAuthMiddleware,
 		firebaseDatabaseMiddleware,
+		api,
 	],
 });
