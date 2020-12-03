@@ -56,10 +56,15 @@ store.subscribe(() => {
 	// console.log('dayEvents', dayEvents);
 });
 
-store.dispatch(subscribeToUserAuthStateChanges());
-store.dispatch(signup('viktoriian@wix.com', 'balalajaja'));
+// store.dispatch(subscribeToUserAuthStateChanges());
+// store.dispatch(signup('viktoriian@wix.com', 'balalajaja'));
 
-// store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));
+store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));
+
+setTimeout(
+	() => store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23')),
+	5000,
+);
 
 // store.dispatch(
 // 	addNewEvent('B7cbkRoH7hTKGOPHNCRSpq9gXs23', '2020', '12', '1', {

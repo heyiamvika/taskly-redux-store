@@ -10,7 +10,7 @@ import * as firebaseActions from './firebase/firebaseActions';
 const initialState = {
 	events: {},
 	loading: false,
-	lastFetch: null,
+	isSubscribed: false,
 };
 
 const calendarSlice = createSlice({
@@ -25,30 +25,54 @@ const calendarSlice = createSlice({
 		},
 		eventsUpdated: (state, action) => {
 			state.events = action.payload;
+			state.lastFetch = Date.now();
 			state.loading = false;
+		},
+		subscribedToEvents: (state) => {
+			state.isSubscribed = true;
 		},
 	},
 });
 
-export const {
+const {
 	eventsChangesRequested,
 	eventsChangesRequestFailed,
 	eventsUpdated,
+	subscribedToEvents,
 } = calendarSlice.actions;
 export default calendarSlice.reducer;
 
 // Action creators
-export const subscribeToUserEvents = (userId) => {
+export const subscribeToUserEvents = (userId) => (dispatch, getState) => {
+	const { isSubscribed } = getState().calendar;
+	if (isSubscribed) return;
+
 	// TO_DO: get user id from auth.user.id
 	const ref = `/calendars/${userId}`;
 
-	return firebaseActions.subscribeDatabaseCallBegan({
-		ref,
-		onSuccess: eventsUpdated.type,
-		onStart: eventsChangesRequested.type,
-		onError: eventsChangesRequestFailed.type,
-	});
+	dispatch(
+		firebaseActions.subscribeDatabaseCallBegan({
+			ref,
+			onSuccess: eventsUpdated.type,
+			onStart: eventsChangesRequested.type,
+			onError: eventsChangesRequestFailed.type,
+		}),
+	);
+
+	dispatch(subscribedToEvents());
 };
+
+// export const subscribeToUserEvents = (userId) => {
+// 	// TO_DO: get user id from auth.user.id
+// 	const ref = `/calendars/${userId}`;
+
+// 	return firebaseActions.subscribeDatabaseCallBegan({
+// 		ref,
+// 		onSuccess: eventsUpdated.type,
+// 		onStart: eventsChangesRequested.type,
+// 		onError: eventsChangesRequestFailed.type,
+// 	});
+// };
 
 export const addNewEvent = (uid, year, month, day, event) => {
 	const ref = `/calendars/${uid}/${year}/${month}/${day}`;
