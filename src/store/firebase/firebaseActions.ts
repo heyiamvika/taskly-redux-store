@@ -17,5 +17,9 @@ export const updateItemCallBegun = createAction('firebase/updateItemCallBegun');
 export const removeItemCallBegun = createAction('firebase/removeItemCallBegun');
 
 // Default
-export const firebaseCallSuccess = createAction('firebase/firebaseCallSuccess');
-export const firebaseCallFailed = createAction('firebase/firebaseCallFailed');
+export const firebaseCallSuccess = createAction<{}>(
+	'firebase/firebaseCallSuccess',
+);
+export const firebaseCallFailed = createAction<string>(
+	'firebase/firebaseCallFailed',
+);

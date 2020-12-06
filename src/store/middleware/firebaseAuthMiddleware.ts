@@ -1,5 +1,10 @@
-import * as firebaseActions from '../firebase/firebaseActions.js';
-import { auth } from '../firebase/firebaseConfig.js';
+import { Middleware } from 'redux';
+
+import * as firebaseActions from '../firebase/firebaseActions';
+import { auth } from '../firebase/firebaseConfig';
+
+import { RootState } from '../store-types/root';
+import { StoreDispatch } from '../store';
 
 const firebaseActionTypes = [
 	firebaseActions.subscribeAuthCallBegan.type,
@@ -8,8 +13,10 @@ const firebaseActionTypes = [
 	firebaseActions.userLogoutCallBegun.type,
 ];
 
-const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
-	if (!firebaseActionTypes.includes(action.type)) return next(action);
+const firebaseAuthMiddleware: Middleware<{}, RootState> = ({ dispatch }) => (
+	next,
+) => async (action) => {
+	if (firebaseActionTypes.includes(action.type)) return next(action);
 
 	next(action);
 
@@ -17,7 +24,7 @@ const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
 		switch (action.type) {
 			case firebaseActions.subscribeAuthCallBegan.type: {
 				const { onAuthorized, onLoggedOut, onStart } = action.payload;
-				await subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut, onStart);
+				// await subscribeToUserAuth(dispatch, onAuthorized, onLoggedOut, onStart);
 				break;
 			}
 			case firebaseActions.userSignupCallBegun.type: {
@@ -55,13 +62,18 @@ const firebaseAuthMiddleware = ({ dispatch }) => (next) => async (action) => {
 
 export default firebaseAuthMiddleware;
 
-const subscribeToUserAuth = (dispatch, onAuthorized, onLoggedOut, onStart) =>
+const subscribeToUserAuth = (
+	dispatch: StoreDispatch,
+	onAuthorized: string,
+	onLoggedOut: string,
+	onStart: string,
+) =>
 	auth.onAuthStateChanged((user) => {
 		// For loading indicators
 		if (onStart) dispatch({ type: onStart });
 
 		// Default
-		dispatch(firebaseActions.firebaseCallSuccess());
+		dispatch(firebaseActions.firebaseCallSuccess(user));
 
 		if (user) {
 			if (onAuthorized) {
@@ -85,10 +97,10 @@ const subscribeToUserAuth = (dispatch, onAuthorized, onLoggedOut, onStart) =>
 		}
 	});
 
-const signupUser = (email, password) =>
+const signupUser = (email: string, password: string) =>
 	auth.createUserWithEmailAndPassword(email, password);
 
-const loginUser = (email, password) =>
+const loginUser = (email: string, password: string) =>
 	auth.signInWithEmailAndPassword(email, password);
 
 const logoutUser = () => auth.signOut();

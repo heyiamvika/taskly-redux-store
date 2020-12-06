@@ -1,31 +1,22 @@
 import store from './store/store';
-import {
-	subscribeToUserEvents,
-	getDaysWithEvents,
-	getDayEvents,
-	getEventByKey,
-	addNewEvent,
-	updateEvent,
-	removeEvent,
-	getYearEvents,
-	getMonthEvents,
-	addNewAttendee,
-} from './store/calendar';
+// import // subscribeToUserEvents,
+// // getDaysWithEvents,
+// // getDayEvents,
+// // getEventByKey,
+// // addNewEvent,
+// // updateEvent,
+// // removeEvent,
+// // getYearEvents,
+// // getMonthEvents,
+// // addNewAttendee,
+// './store/calendar';
 
-import {
-	signup,
-	login,
-	logout,
-	subscribeToUserAuthStateChanges,
-} from './store/auth';
-
-import { apiCallBegan, apiCallSuccess, apiCallFailed } from './store/api';
-
-// store.dispatch(
-// 	apiCallBegan({
-// 		url: '/bugs',
-// 	}),
-// );
+// import {
+// 	signup,
+// 	login,
+// 	logout,
+// 	subscribeToUserAuthStateChanges,
+// } from './store/auth';
 
 store.subscribe(() => {
 	const state = store.getState();
@@ -60,7 +51,7 @@ store.subscribe(() => {
 // store.dispatch(subscribeToUserAuthStateChanges());
 // store.dispatch(signup('viktoriian@wix.com', 'balalajaja'));
 
-store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));
+// store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));
 
 // store.dispatch(
 // 	addNewEvent('B7cbkRoH7hTKGOPHNCRSpq9gXs23', '2020', '12', '1', {
@@ -72,21 +63,16 @@ store.dispatch(subscribeToUserEvents('B7cbkRoH7hTKGOPHNCRSpq9gXs23'));
 // 	}),
 // );
 
-const testAttendee = {
-	email: 'viktoriian@wix.com',
-	hasAccepted: false,
-};
-
-store.dispatch(
-	addNewAttendee(
-		testAttendee,
-		'B7cbkRoH7hTKGOPHNCRSpq9gXs23',
-		'2020',
-		'12',
-		'1',
-		'-MNd4oUtnMhnmB6srgvT',
-	),
-);
+// store.dispatch(
+// 	addNewAttendee(
+// 		'viktoriian@wix.com',
+// 		'B7cbkRoH7hTKGOPHNCRSpq9gXs23',
+// 		'2020',
+// 		'12',
+// 		'1',
+// 		'-MNd4oUtnMhnmB6srgvT',
+// 	),
+// );
 
 // // store.dispatch(
 // 	updateEvent(

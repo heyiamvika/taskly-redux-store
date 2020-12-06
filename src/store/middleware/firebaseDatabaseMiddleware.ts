@@ -1,5 +1,8 @@
-import * as firebaseActions from '../firebase/firebaseActions.js';
-import { database } from '../firebase/firebaseConfig.js';
+import { Middleware } from 'redux';
+
+import * as firebaseActions from '../firebase/firebaseActions';
+import { database } from '../firebase/firebaseConfig';
+import { StoreDispatch } from '../store';
 
 const firebaseActionTypes = [
 	firebaseActions.subscribeDatabaseCallBegan.type,
@@ -8,9 +11,9 @@ const firebaseActionTypes = [
 	firebaseActions.removeItemCallBegun.type,
 ];
 
-const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
-	action,
-) => {
+const firebaseDatabaseMiddleware: Middleware = ({ dispatch }) => (
+	next,
+) => async (action) => {
 	if (!firebaseActionTypes.includes(action.type)) return next(action);
 
 	next(action);
@@ -59,7 +62,12 @@ const firebaseDatabaseMiddleware = ({ dispatch }) => (next) => async (
 
 export default firebaseDatabaseMiddleware;
 
-const subscribeToDatabase = (dispatch, ref, onSuccess, onStart) =>
+const subscribeToDatabase = (
+	dispatch: StoreDispatch,
+	ref: string,
+	onSuccess: string,
+	onStart: string,
+) =>
 	database.ref(ref).on('value', (snapshot) => {
 		// For loading indicators
 		if (onStart) dispatch({ type: onStart });
@@ -78,6 +86,7 @@ const subscribeToDatabase = (dispatch, ref, onSuccess, onStart) =>
 		}
 	});
 
-const addNewItem = (ref, item) => database.ref(ref).push(item);
-const editItem = (ref, updatedItem) => database.ref(ref).update(updatedItem);
-const removeItem = (ref) => database.ref(ref).remove();
+const addNewItem = (ref: string, item: Event) => database.ref(ref).push(item);
+const editItem = (ref: string, updatedItem: Event) =>
+	database.ref(ref).update(updatedItem);
+const removeItem = (ref: string) => database.ref(ref).remove();
